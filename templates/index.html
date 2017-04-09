@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Flask-Cloudy</title>
+</head>
+<body>
+
+<h1>Antarin-File-Server</h1>
+
+<form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+    Select file to upload:
+    <input type="file" name="file" id="fileToUpload"> <br>
+    <input type="submit" value="Upload File" name="submit">
+</form>
+
+<hr>
+<form action="{{ url_for('addUsers') }}" method="post" enctype="multipart/form-data">
+	Add users to the system (Comma Separated for multiple users):
+    <input type="text" name="users"><br>
+    <input type="submit" value="Add Users" name="submit">
+</form>
+<hr>
+
+<form action="{{ url_for('deleteAll') }}" method="post" enctype="multipart/form-data">
+	Delete All Data(Files/Users):
+    <input type="submit" value="Delete All" name="submit">
+</form>
+<hr>
+
+<h3>File display </h3>
+<form action="{{ url_for('viewperuser') }}" method="post" enctype="multipart/form-data">
+Users for which files need to be shown:
+   <input type="text" name="user"><br>
+    <input type="submit" value="Get Files" name="submit">
+</form>
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Size</th>
+    </thead>
+    <tbody>
+        {% for obj in storageperuser %}
+        <tr>
+            <td><a href="{{ url_for('view', object_name=obj.name) }}">{{ obj.name }}</a></td>
+            <td>{{ obj.size }} bytes</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+<hr>
+<h3>List of files present on Server </h3>
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Size</th>
+    </thead>
+    <tbody>
+        {% for obj in storage %}
+        <tr>
+            <td><a href="{{ url_for('view', object_name=obj.name) }}">{{ obj.name }}</a></td>
+            <td>{{ obj.size }} bytes</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<hr>
+<h3>List of Users present on Server </h3>
+<table>
+    <thead>
+        <th>Username</th>
+    </thead>
+    <tbody>
+        {% for user in userlist %}
+        <tr>
+            <td>{{ user }} </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

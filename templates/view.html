@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Flask-Cloudy</title>
+</head>
+<body>
+
+<h1>Flask-Cloudy: View File</h1>
+<a href="{{ url_for('index') }}"><- Home</a>
+<br> <br>
+
+Name: {{ obj.name }} <br><br>
+Size: {{ obj.size }} bytes <br><br>
+
+View file: <a href="{{ obj.url }}">{{ obj.url }}</a> <br><br>
+
+Users:  {{userlist }}  <br><br>
+
+{% set download_url = obj.download_url() %} 
+Download: <a href="{{ download_url }}">{{ download_url }}</a> <br><br>
+
+<form action="{{ url_for('addUsersToFile') }}" method="post" enctype="multipart/form-data">
+	Add users to file(Comma Separated for multiple users):
+    <input type="text" name="users"><br>
+	 <input type="hidden" name="filename" value={{ obj.name}} />
+    <input type="submit" value="Add Users" name="submit">
+</form>
+</body>
+</html>

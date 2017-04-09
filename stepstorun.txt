@@ -1,0 +1,24 @@
+We have 6 subsections on the main page of the file server
+
+1. Section 1 allows you to chose and upload a file. I have set up the server timeout to 1 hour, so as long as the file to be uploaded takes less than an hour to be upload, it should safely upload
+
+2. Section 2 allows to add users to the system (john,dave etc.) which will be user for file access privileges
+
+3. Section 3 allows you to delete all users and files from the system, so you can start frest
+
+4. Section 4 gives you all the files for a particular user, which you added to the system earlier.
+
+5. Section 5 gives you all the files currently on the system
+
+6. Section 6 gives you all the users currently in the system
+
+If you click any link on the file, it will take you to a file view page, where you can see the name and size of the file, you can view the file, get a download link and get the users associated to the file. You can also add any existing user to the file as well.
+
+A normal test flow might be.
+
+1. Add a file in section 1.
+2. Add a user in section 2.
+3. Get file for that user in section 3. It shows empty
+4. Navigate to file view and add the added user to the file and go back.
+5. Get file for that user in section 3. It shows the file now.
+6. Delete all in Section 3 when done

@@ -1,0 +1,9 @@
+flask
+flask_cloudy
+itsdangerous
+Jinja2
+MarkupSafe
+Werkzeug
+apache-libcloud
+flask-sqlalchemy
+pymysql

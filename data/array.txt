@@ -1,0 +1,1849 @@
+6,7,8,11,12,15 16 19 20 22 25 28 30
+PC (7,13,15,19,23,29-48,50,55-59,63,65-66,68-73,76,78)
+
+Bubble Sort
+
+void bubbleSort(int[] nums){
+	for(int i=0;i<arr.length;i++){
+        for(int j=1;j<arr.length-i;j++){
+            if(arr[j-1] > arr[j]){
+                int tmp = arr[j-1];
+                arr[j-1] = arr[j];
+                arr[j] = tmp;
+            }
+        }
+    }    
+}
+
+Selection Sort
+
+void selectionSort(int[] nums){
+        for(int i = 0;i<nums.length;i++){
+            int min = Integer.MAX_VALUE;
+            int minindex = i;
+			//Find the minimum value in the array
+            for(int j = i+1;j<nums.length;j++){
+                if(nums[j]<nums[minindex]){
+                    minindex = j;
+                }
+            }
+			//Put minimum at array start
+            int tmp = nums[i];
+            nums[i] = nums[minindex];
+            nums[minindex] = tmp;
+        }
+    }
+	
+Quick Sort
+
+    int partition(int[] nums,int left,int right){
+		//Pick pivot as middle of array
+        int pivot = nums[(left+right)/2];
+        while(left <= right){
+			//Find element on left that should be on right
+            while(nums[left]<pivot)
+                left++; 
+			//Find element on right that should be on left
+            while(nums[right]>pivot)
+                right--;
+			//Swap both elements, and move indices
+            if(left<=right){
+                int tmp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = tmp;
+                left++;
+                right--;
+            }
+        }
+        return left;
+    }
+    
+    void quickSort(int[] nums,int left, int right){
+        
+        int index = partition(nums,left,right);
+		//Sort left half
+        if(left<index-1)
+            quickSort(nums,left,index-1);
+		//Sort right half
+        if(index<right)
+            quickSort(nums,index,right);
+            
+    }
+	
+Given an array A[] and a number x, check for pair in A[] with sum as x, and return the indexes
+{2, 7, 11, 15}, 9 -> (0,1)
+
+Array is sorted
+//Use two indexes to scan the sorted array from left to right, take sum of values at those indexes
+Increment left index if sum is less than target, decrement right index if sum is greater than target, else
+we found the pair, output the indices
+	int[] twoSum(int[] numbers, int target) {
+        int[] indices = new int[2];
+        if(numbers == null || numbers.length < 2)
+		   return indices;
+		//Keep two indexes, one from 0 and other from length - 1
+	    int m = 0;
+	    int n = numbers.length - 1;
+	    int sum = 0;
+	    while(m<n){
+			//Take sum of values at indexes
+			//We found the pair, return the indices
+		    if( numbers[m] + numbers[n] == target){
+		       indices[0] = m+1;
+		       indices[1] = n+1;
+		       break;
+		    }
+			//If sum less than target, increment left index
+	    	else if(numbers[m] + numbers[n] < target){
+	    		m++;
+	    	}
+			//If sum greater than target, decrement right index
+	    	else if(numbers[m] + numbers[n] > target){
+	    		n--;
+    		}
+	    	sum = 0;
+    	} 
+    	return indices;
+    }
+
+If array is unsorted
+//Create a HashMap and fill the values. If target - nums[i] is not present in the HashMap, add nums[i] to it, else we found a pair, 
+output the indices O(n)
+int[] twoSum(int[] nums, int target) {
+            Map<Integer,Integer> map = new HashMap<Integer,Integer>();
+            int[] indices = new int[2];
+			//If array length is less then 2, return 0,0
+            if(nums == null || nums.length<2){
+                return indices;
+            }
+            for(int i=0;i<nums.length;i++){
+                int val = target - nums[i];
+				//If val is not in the map, put it
+                if(map.get(val) == null){
+                    map.put(nums[i],i);
+                }
+				//If val is present, we found a pair, return the indices
+                else{
+                    indices[0] = map.get(val);
+                    indices[1] = i;
+                    return indices;
+                }
+            }
+            return indices;
+}
+
+Find a triplet that sums to a given number
+[-1, 0, 1, 2, -1, -4]  0 -> (-1,0,1) (-1,-1,2)
+
+//Sort the array, then take nums[i] as the first element, run the loop from from 0 to length - 2 , and find another two elements by applying
+two sum algorithm.To ignore duplicates, keep incrementing or decrementing indexes, if we find duplicates, and ignore
+duplicates while taking first element too.  O(n^2)
+
+List<List<Integer>> threeSum(int[] nums,int target) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        if(nums == null || nums.length < 3)
+            return list;
+		//Sort the array
+        Arrays.sort(nums);
+		//Take nums[i] as the target, and run the loop from 0 to length - 2
+        for(int i = 0 ; i <nums.length-2;i++){
+		  //Ignore duplicates while taking first element
+          if(i!=0 && nums[i]==nums[i-1])
+                continue;
+			//Start the indexes from the remaining array
+			int m = i + 1;
+			int n = nums.length - 1;
+			while(m<n){ 
+				//Follow two sum for finding triplets
+				if(nums[i] + nums[m] + nums[n] == target ){
+					List<Integer> l = new ArrayList<Integer>();
+					l.add(nums[i]);
+					l.add(nums[m]);
+					l.add(nums[n]);
+					list.add(l);
+					m++;
+					n--;
+					//To handle duplicate triples in the result
+					while(m<n && nums[m] == nums[m-1])
+						m++;
+					while(m<n && nums[n] == nums[n+1])
+						n--;
+				}
+				else if(nums[i] + nums[m] + nums[n] < target){
+					m++;
+				}
+				else{
+					n--;
+				}
+			}
+				
+		}
+        return list;
+    }
+	 
+Find a triplet that sums is closest to a given number, and return that sum 
+   {-1,2,1,4} 1 -> 2 {-1+2+1 = 2}
+
+  ////Sort the array, then take nums[i] , i from 0 to length - 2 as the first element, and find another two elements by applying two sum 
+  algorithm. Keep Track of the closest sum to target we found till now , and increment decrement indexes according to values of sum and 
+  target O(n^2)
+  
+  public int threeSumClosest(int[] nums, int target) {
+        int min = Integer.MAX_VALUE;
+        int result = 0;
+        Arrays.sort(nums);
+        
+		//Take nums[i] as first element, and run loop from 0 to length - 2
+        for(int i = 0; i< nums.length-2;i++){
+			//Start the indexes from the remaining array
+            int m = i+1;
+            int n = nums.length - 1;
+            while(m<n){
+                int sum = nums[i] + nums[m] + nums[n];
+				//Take absolute difference
+                int diff = Math.abs(sum-target);
+				//If we sum to be equal to target, return
+                if(diff == 0)
+                    return sum;
+				//Keep track of the closest sum we have encountered to target by differene between sum and target
+                if(diff < min){
+                    min = diff;
+                    result = sum;
+                }
+				//Increment/decrement indexes according to value of sum and target
+                if(sum<=target){
+                    m++;
+                }
+                else{
+                    n--;
+                }
+            }
+        }
+        return result;
+    }
+
+Count triplets with sum smaller than a target
+{5, 1, 3, 4, 7} 12 -> 5 (1, 3, 4), (1, 3, 5), (1, 3, 7) and (1, 4, 5)
+ 
+//Sort the array. Then take nums[i] , i from 0 to length - 2 as the first element, and find another two elements by applying two sum 
+  algorithm. If we find sum less than target, increase the triplet count by difference between right and left indices. O(n^2)
+	int threeSumClosest(int[] nums, int target) {
+      
+        int result = 0;
+        Arrays.sort(nums);
+        
+		//Take nums[i] as first element, and run loop from 0 to length - 2
+        for(int i = 0; i< nums.length-1;i++){
+			//Start the indexes from the remaining array
+            int m = i+1;
+            int n = nums.length - 1;
+            while(m<n){
+               int sum = nums[i] + nums[m] + nums[n];
+			   //If sum is less than target, for elements i and m in the triplets, there are n-m possible third elements
+               if(sum >= target){
+                   n--;
+               }
+               else{
+                   result+=n-m;
+                   m++;
+               }
+            }
+        }
+        return result;
+    }
+	
+Find four elements that sum to a given value.
+{1 0 -1 0 -2 2}  0 -> (-1, 0, 0, 1) (-2, -1, 1, 2) (-2, 0, 0, 2)
+
+// Sort the array. Take nums[i] as first element, loop from 0 to length - 3, Take nums[j] as second element, loop from i + 1 to length - 2
+   and then follow the 2 sum method. To ignore duplicates, keep incrementing or decrementing indexes, if we find duplicates, and ignore
+duplicates while taking first element and second element too. O(n^3)
+	List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        if(nums == null || nums.length <= 3)
+            return list;
+        Arrays.sort(nums);
+        
+		//Take nums[i] as first element, and run loop from 0 to length - 3
+        for(int i = 0; i< nums.length - 3 ; i++)
+			//Ignore duplicates in first element
+			if(i!=0 && nums[i]==nums[i-1])
+				continue;
+			//Take nums[j] as second element, loop from i + 1 to length - 2
+			for(int j = i+1; j < nums.length - 2; j++){
+				//Ignore duplicate in second element
+				if(j!=i+1 && nums[j]==nums[j-1])
+					continue; 
+				//Take the indexes for 2 sum method
+				int m = j+1;
+				int n = nums.length-1;
+				while(m<n){
+					int sum = nums[i] + nums[j] + nums[m] + nums[n];
+					if(sum == target){
+						List<Integer> l = new ArrayList<Integer>();
+						l.add(nums[i]);
+						l.add(nums[j]);
+						l.add(nums[m]);
+						l.add(nums[n]);
+						list.add(l);
+						m++;-
+						n--;
+						//Ignore duplicate for third and fourth element
+						while(m<n && nums[n] == nums[n+1])
+							n--;
+						while(m<n && nums[m] == nums[m-1])
+							m++;
+					}
+					else if(sum < target){
+						m++;
+					}
+					else{
+						n--;
+					}
+				}
+			}
+        }
+        return list;
+    }
+	
+4 Sum 2: Given four lists A, B, C, D of integer values, compute how many tuples (i, j, k, l) there are such that A[i] + B[j] + C[k] + D[l] is zero.
+
+	int fourSumCount(int[] A, int[] B, int[] C, int[] D) {
+        
+        Map<Integer, Integer> map = new HashMap<>();
+    
+		//Create a HashMap, and make a double for loop iterating over all values. The key is sum A[i] + B[j], with value being the number of times that sum occurs
+        for(int i=0; i<C.length; i++) {
+            for(int j=0; j<D.length; j++) {
+                int sum = C[i] + D[j];
+                map.put(sum, map.getOrDefault(sum, 0) + 1);
+            }
+        }
+        int res=0;
+		//Check for key -C[k]-D[l] in the map, by making a double for loop, and if found, add the value to the result
+        for(int i=0; i<A.length; i++) {
+            for(int j=0; j<B.length; j++) {
+                res += map.getOrDefault(-1 * (A[i]+B[j]), 0);
+            }
+        }
+        
+        return res;
+    }
+	
+	
+Remove duplicates from sorted array, modify the array in place and return the unique array
+	{1,1,2,2,2,3,3} -> {1,2,3}
+	
+	//Keep two indexes i and j, starting from 1 and 0. Keep incrementing i till you find same element, if not, increment j,copy over the
+	  new found element to jth index , and increment i. Return the first j+1 elements of the array O(n)
+	int[] removeDuplicates(int[] nums) {
+        if(nums.length <= 1)
+            return nums.length;
+		int i = 1 ;
+        int j = 0 ;
+        while(i<nums.length){
+			//Keep incrementing i until you find same element
+            if(nums[i] == nums[j]){
+                i++;
+            }
+			//if not, increment j,copy over the new found element to jth index , and increment i.
+            else{
+                j++;
+                nums[j] = nums[i];
+                i++;
+            }
+        }
+		//Return first j+1 elements of array
+        return Arrays.copyOf(nums,j+1);
+    }
+
+Remove duplicates from sorted array where duplicates are allowed atmost twice, modify the array in place and return the array
+	{1,1,1,2,2,3} -> {1,1,2,2,3}
+	
+	//Keep two indexes i and j, starting from 2 and 1. Keep incrementing i till you find that elements at i,j and j-1 are same, 
+	if not, increment j,copy over the new found element to jth index , and increment i. Return the first j+1 elements of the array
+	int[] removeDuplicates(int[] nums) {
+        if(nums.length <= 2)
+            return nums;
+        int i = 2 ;
+        int j = 1 ;
+        while(i<nums.length){
+			//Keep incrementing i until you find that elements at i,j and j-1 are same
+            if(nums[i] == nums[j] && nums[i] == nums[j-1]){
+                i++;
+            }
+			//If not, increment j,copy over the new found element to jth index , and increment i
+            else{
+                j++;
+                nums[j] = nums[i];
+                i++;
+            }
+        }
+        return Arrays.copyOf(nums,j+1);   
+    }
+
+Given an array and a value, remove all instances of that value in place and return the new length.
+    {3,2,2,3} , 3 -> {2,2}
+
+	//Take two indices, i and j, starting from 0. Keep incrementing i always, if we find element at index i not equal to value, copy it over to jth element, and increment j. O(n)
+	int[] removeElement(int[] nums, int val) {
+        int i = 0;
+        int j = 0;
+        while(i<nums.length){
+			//nums[i] not equals value, copy over nums[i] to jth position, and increment j
+            if(nums[i] != val){
+                nums[j] = nums[i];
+                j++;
+            }
+			//Keep incrementing i always
+            i++;
+        }
+        return Arrays.copyOf(nums,j);
+    }
+
+Move zeroes in the array towards the end.
+	{1,0,3,0,12} -> {1,3,12,0,0}
+
+	//Take two indices, i and j, starting from 0. Keep incrementing i, if we find element at index i not equal to 0, copy it over to jth 
+	element, and increment j. After loop finishes, make all elements in array from j to length - 1 as 0.
+	int[] moveZeroes(int[] nums) {
+        int i = 0;
+        int j = 0;
+        while(i<nums.length){
+			//nums[i] not equals value, copy over nums[i] to jth position
+            if(nums[i] != 0){
+                nums[j] = nums[i];
+                j++;
+            }
+			//Keep incrementing i always
+            i++;
+        }
+		//Make all elements starting from j as 0.
+        for(int k=j;k<nums.length;k++){
+            nums[k] = 0;
+        }
+		return nums;
+    }
+
+Given n integers, representing lines of height ai starting at index i, find the maximum water that can be contained by
+	the lines
+	
+	//Start two indexes lHeight and rHeight from both ends of array. Keep track of the maximum value, and increment lHeight if height of
+	left side is smaller than height of right side, or decrement rHeight otherwise
+	int maxArea(int[] height) {
+        int lHeight = 0;
+        int rHeight = height.length - 1;
+        int result = Integer.MIN_VALUE;
+        while(lHeight<rHeight){
+			//Keep track of the maximum value
+            int area = (rHeight - lHeight)*Math.min(height[lHeight],height[rHeight]);
+            if(area > result)
+                result = area;
+			//increment lHeight if height ofleft side is smaller than height of right side
+            if(height[lHeight]<height[rHeight]){
+                lHeight++;
+            }
+			//Otherwise increment rHeight
+            else{
+                rHeight--;
+            }
+        }
+        return result;
+    }
+
+Given n non-negative integers representing an elevation map where the width of each bar is 1, 
+	compute how much water it is able to trap after raining.
+	{2,0,2} -> 4
+	
+	//Compute arrays left and right, where left[i] contains height of tallest bar left of i including itself,
+	right[i] contains height of tallest bar right of i including itself. Then for every i, the water held by
+	ith bar is minimum of left[i] and right[i] minus the value of height at i'th index. O(n)
+	int trap(int[] height) {
+        if(height.length<=2)
+            return 0;
+        int result = 0;
+        int[] left = new int[height.length];
+        int[] right = new int[height.length];
+        
+        left[0] = height[0];
+        right[height.length-1] = height[height.length-1];
+		//left[i] contains height of tallest bar left of i including itself
+        for(int i = 1;i<height.length;i++){
+            left[i] = Math.max(left[i-1],height[i]);
+        }
+		//right[i] contains height of tallest bar right of i including itself
+        for(int i = height.length-2;i>=0;i--){
+            right[i] = Math.max(right[i+1],height[i]);
+        }
+		//the water held by ith bar is minimum of left[i] and right[i] minus the value of height at i'th index
+        for(int i = 0; i < height.length;i++){
+            result += Math.min(left[i],right[i]) - height[i];
+        }
+        return result;
+    }
+		
+Merge two sorted arrays, given one array has enough space to hold other.
+
+	//nums1 has extra space in end. Start indexes from end of both arrays where numbers start, copy the bigger element of the two arrays 
+	at the end of nums1, and decrement the indexes. After the end of the loop, copy all elements of num2 into num1. O(m+n)
+	int[] merge(int[] nums1, int m, int[] nums2, int n) {
+
+            while(m > 0 && n > 0){
+				//If nums1 is bigger then nums2, copy nums1 value at end of nums1
+                if(nums1[m-1]>nums2[n-1]){
+                    nums1[m+n-1] = nums1[m-1];
+                    m--;
+                }
+				//Else copy nums2 value
+                else{
+                    nums1[m+n-1] = nums2[n-1];
+                    n--;
+                }
+            }
+			//Copy nums2 value at end of nums1
+            while(n>0){
+                nums1[m+n-1] = nums2[n-1];
+                n--;
+            }
+			return nums1;
+    }
+	
+Given a list of words and two words word1 and word2 in the list, find shortest distance between them
+
+word1 and word2 are different
+{"practice", "makes", "perfect", "coding", "makes"} -> "practice" "perfect" 2 "practice" "makes" 1
+
+//Loop through the list, keeping track of position of word1 and word2 in list. Whenever either is found, update the minimum distance
+between them. O(m+n)
+int shortestDist(String[] words, String word1, String word2) {
+        int m = -1;
+        int n = -1;
+         int min = Integer.MAX_VALUE;
+		//Loop through the list, keeping track of position of word1 and word2 in list
+        for(int i=0;i<words.length;i++){
+            String s = words[i];
+			//If word1 or word2 is found in list, update the minimum distance between them
+            if(word1.equals(s)){
+                m = i;
+                if(n!=-1)
+                    min = Math.min(min,Math.abs(m-n));
+            }
+            else if(word2.equals(s)){
+                n = i;
+                if(m!=-1)
+                    min = Math.min(min,Math.abs(m-n));
+                
+            }
+        }
+        return min;
+}
+
+word1 and word2 can be same.
+{"practice", "makes", "perfect", "coding", "makes"} -> "makes" "makes" 3 
+
+//Keep an extra turn variable, so that the two indices keeping track of word1 and word2 positions take turn to update O(m+n)
+int shortestDist(String[] words, String word1, String word2) {
+        int m = -1;
+        int n = -1;
+        int min = Integer.MAX_VALUE;
+        int turn = 0;
+		//If words are equal, initialize the turn variable
+        if(word1.equals(word2))
+            turn = 1;
+        for(int i=0;i<words.length;i++){
+            System.out.println(min+" ");
+            String s = words[i];
+			//Update word1 index when turn = 1 and update turn = 2 inside if turn = 1
+            if(word1.equals(s) && (turn == 1 || turn == 0)){
+                m = i;
+                if(turn == 1)
+                    turn = 2;
+                if(n!=-1)
+                    min = Math.min(min,Math.abs(m-n));
+            }
+			//Update word2 index when turn = 2, and update turn = 1 inside if turn = 2
+            else if(word2.equals(s) && (turn == 2 || turn == 0)){
+                n = i;
+                if(turn == 2)
+                    turn = 1;
+                if(m!=-1)
+                    min = Math.min(min,Math.abs(m-n));
+                
+            }
+        }
+        return min;
+    }
+
+Intersection of two unsorted arrays
+
+Don't allow duplicates
+{1,2,2,1} {2,2} -> {2}
+
+	//Initialize two sets. Put all elements of first array into the first set. Put all elements of second array present in first set into
+	second set. Create intersection array out of second set elements O(m+n)
+	int[] intersection(int[] nums1, int[] nums2) {
+        Set<Integer> set1 = new HashSet<Integer>();
+        Set<Integer> set2 = new HashSet<Integer>();
+		//Put all elements of first array into first set
+        for(int i = 0;i<nums1.length;i++){
+            set1.add(nums1[i]);
+        }
+		//Put all elements of second array present in first set into second set
+        for(int j = 0; j <nums2.length;j++){
+            if(set1.contains(nums2[j])){
+                set2.add(nums2[j]);
+            }
+        }
+		//Create intersection array out of second set elements
+        int[] result = new int[set2.size()];
+        int j =0;
+        for(int i: set2){
+            result[j] = i;
+            j++;
+        }
+        return result;
+    }
+	
+Allow duplicates	
+{1,2,2,1} {2,2} -> {2,2}	
+	
+	//Initialize hashmap. Keep count of first array elements in map.  Then loop through second array, and if element is present in map,
+	put it into a list, and decrement count. If count reaches 0, remove element from map. Create intersection  array out of list. O(m+n)
+	int[] intersect(int[] nums1, int[] nums2) {
+        Map<Integer,Integer> map = new HashMap<Integer,Integer>();
+		//Keep count of nums1 elements in map
+        for(int i = 0;i<nums1.length;i++){
+            if(map.containsKey(nums1[i])){
+                 map.put(nums1[i],map.get(nums1[i])+1);
+               
+            }
+            else{
+                map.put(nums1[i],1);
+            }
+        }
+        List<Integer> list = new ArrayList<Integer>();
+		//Loop through nums2
+        for(int i = 0;i<nums2.length;i++){
+			//If nums2 element is present in nums1, put it in list
+            if(map.containsKey(nums2[i])){
+			   //Decrement count and remove element from when count reaches 0.
+               if(map.get(nums2[i]) > 1){
+                   map.put(nums2[i],map.get(nums2[i])-1);
+               }
+               else{
+                   map.remove(nums2[i]);
+               }
+               list.add(nums2[i]);
+            }
+        }
+        int[] result = new int[list.size()];
+        int j = 0;
+		//Create intersection array out of map elements
+        for(int i: list){
+            result[j] = i;
+            j++;
+        }
+        return result;
+    }
+
+Union and intersection of two sorted arrays
+	{1,3,4,5,7} {2,3,5,6} -> {1,2,3,4,5,6,7} {3,5}
+	
+	//Use two index variables i and j, initial values i = 0, j =  If arr1[i] is smaller than arr2[j], add arr1[i] to the list and increment i.
+	If arr1[i] is greater than arr2[j],add  arr2[j] to the list and increment j.If both are same, add any of them and increment both i and j.
+	Add remaining elements of the larger array. O(m+n)
+	List<Integer> union(int[] arr1,int[] arr2){
+        int len1 = arr1.length;
+        int len2 = arr2.length;
+        int i = 0;
+        int j = 0;
+		List<Integer> list = new ArrayList<Integer>();
+        while(i<len1 && j<len2){
+			//If arr1[i] is smaller than arr2[j],add arr1[i] to the list and increment i
+            if(arr1[i]<arr2[j]){
+                list.add(arr1[i]);  
+                i++;
+            }
+			//If arr1[i] is greater than arr2[j] add arr2[j] to the list and increment j
+            else if(arr1[i]>arr2[j]){
+                list.add(arr2[j]);   
+                j++;
+            }
+			//If both are same then add any of them and increment both i and j
+            else{
+                list.add(arr1[i]); 
+                i++;
+                j++;
+            }
+       }
+	   //Add remaining elements of the larger array.
+       if(i<len1){
+          while(i<len1){
+              list.add(arr1[i]);
+              i++;
+          }
+       }
+       if(j<len2){
+          while(j<len2){
+              list.add(arr2[j]);
+              j++;
+          }
+       }
+	   return list;
+    }
+	
+	//Use two index variables i and j, initial values i = 0, j = 0). If arr1[i] is smaller than arr2[j] then increment i.
+	 If arr1[i] is greater than arr2[j] then increment j.  If both are same add one of them to the list and increment both i and j. O(m+n)
+	void intersection(int[] arr1,int[] arr2){
+        int len1 = arr1.length;
+        int len2 = arr2.length;
+        int i = 0;
+        int j = 0;
+		List<Integer> list = new ArrayList<Integer>();
+        while(i<len1 && j<len2){
+			//If arr1[i] is smaller than arr2[j] then increment i.
+            if(arr1[i]<arr2[j]){
+                i++;
+            }
+			// If arr1[i] is greater than arr2[j] then increment j
+            else if(arr1[i]>arr2[j]){
+                j++;
+            }
+			// If both are same then add any of them and increment both i and j.
+            else{
+                list.add(arr1[i]]);
+                i++;
+                j++;
+            }
+       }
+	   return list;
+    }	
+	
+Search for position to insert a number not present in a sorted array, if present, return the index
+	[1,3,5,6], 7 -> 4 [1,3,5,6], 2 -> 1
+	
+	//Perform regular binary search, returning start index if target is not found 
+	int searchInsert(int[] nums, int target) {
+        int start = 0;
+        int end = nums.length - 1;
+        while(start<=end){
+            int  mid = (start+end)/2;
+            if(nums[mid] < target){
+                start = mid+1;
+            }
+            else if(nums[mid] > target){
+                end = mid-1;
+            }
+            else{
+                return mid;
+            }
+        }
+        return start;
+    }
+	
+Find minimum element in rotated sorted array
+
+	No duplicates in array
+	//Perform a modified binary search. If start index is less than end index, array is not rotated, so return start element. If one element
+	remains, return that, if two remains, return minimum of that. Else check the middle index. If value is smaller than start index, search
+	in right subarray, else search in right subarray
+	int findMin(int[] nums,int start, int end){
+		// If start index is less than end index, array is not rotated, so return start element
+        if(nums[start] < nums[end])
+            return nums[start];
+		// If one element remains, return that
+        if (start == end)
+            return nums[start];
+		//if two remains, return minimum of them
+        if(end - start == 1)
+            return Math.min(nums[start],nums[end]);
+        int middle = (start + end)/2;
+		//If middle value is smaller than start index, search in left subarray, else search in right subarray
+        if(nums[middle] > nums[start]){
+            return findMin(nums,middle,end);
+        }
+        else{
+            return findMin(nums,start,middle);
+        }
+    }
+	
+	int findMin(int[] nums){
+		return findMin(nums,0,nums.length-1);
+	}
+	
+	Duplicates in array
+	//If we find duplicates, by comparing start and end index values, do search after incrementing start index by 1.
+	int findMin(int[] nums,int start, int end){
+		// If start index is less than end index, array is not rotated, so return start element
+        if(nums[start] < nums[end])
+            return nums[start];
+		// If one element remains, return that
+        if (start == end)
+            return nums[start];
+		//if two remains, return minimum of them
+        if(end - start == 1)
+            return Math.min(nums[start],nums[end]);
+        int middle = (start + end)/2;
+		//Increment start index by 1 and search on finding duplicates 
+		if(nums[start] == nums[end]){
+		    return findMin(nums,start+1,end);
+		}
+		//If middle value is smaller than start index, search in right subarray, else search in right subarray
+        else if(nums[middle] >= nums[start]){
+            return findMin(nums,middle,end);
+        }
+        else{
+            return findMin(nums,start,middle);
+        }
+    }
+	
+	int findMin(int[] nums){
+		return findMin(nums,0,nums.length-1);
+	}
+
+Given a sorted array, search for start and end of a given target
+	{5,7,7,8,8,10} 8 -> 3,4 4 -1,-1
+	
+	//If target lies outside the range, less than first or greater than last index, return default. Else do a binary search.
+	If start and end values are same, return them. If target not found, perform regular binary search, but if target found,
+	set start and end position to middle, and then to avoid duplicates, iterate to the left and right, and set the starting and end position 
+	int[] searchRange(int[] nums, int target) {
+        if(nums == null || nums.length == 0)
+            return null;
+        int[] arr = {-1,-1};
+		//If target lies outside the range, less than first or greater than last index, return default
+        if(target<nums[0] || target > nums[nums.length-1])
+            return arr;
+		//Else do binary search
+        binarySearch(nums,0,nums.length-1,target,arr);
+        return arr;
+    }
+    
+    public void binarySearch(int[] nums, int start, int end,int target,int[] arr){
+        if(start > end)
+            return;
+		//If start and end values are same, return them
+        if(nums[start] == nums[end] && nums[start] == target){
+            arr[0] = start;
+            arr[1] = end;
+            return;
+        }
+         int mid = (start + end)/2;
+		 //If target not found, perform regular binary search
+         if(nums[mid]<target){
+            binarySearch(nums,mid+1,end,target,arr);
+         }
+         else if(nums[mid]>target){
+              binarySearch(nums,start,mid-1,target,arr);
+         }
+		 //target found
+         else{
+			 //Set start and end position to middle
+             arr[0] = mid;
+             arr[1] = mid;
+             int i = mid;
+			 //To avoid duplicates, iterate to the left and right, and set the starting and end position 
+             while(i>start && nums[i] == nums[i-1] )
+                i--;
+             arr[0] = i;
+             i = mid;
+             while(i<end && nums[i] == nums[i+1] )
+                  i++;
+
+             arr[1] = i; 
+             return;
+         }   
+    }
+
+First missing positive integer in an unsorted array
+1,2,0 -> 3  3,4,-1,1 -> 2
+	
+	//Scan the array,Check in a while loop if number i+1 is at the i'th position. If i'th element is not in the range of values 0 to n, 
+	break. If the numbers are duplicate, break. Else swap so that i+1 is at i'th position.Check the number i+1 not present in it's 
+	correct i'th position and return it. If all at correct position, return n+1
+	int firstMissingPositive(int[] nums) {
+           int n = nums.length;
+            //Scan the array
+            for (int i = 0; i < n; i++) {
+				//Check in a while loop if number i+1 is not at the i'th position
+                while (nums[i] != i+1) {
+           
+					//If i'th element is not in the range of values 0 to n, break
+                    if (nums[i] <= 0 || nums[i] >= n)
+                        break;
+            
+					//If the numbers are duplicate, break
+                    if(nums[i]==nums[nums[i]-1])
+                        break;
+          
+					//Else swap so that i+1 is at i'th position
+                    int temp = nums[i];
+                    nums[i] = nums[temp-1];
+                    nums[temp-1] = temp;
+                }
+            }
+			//Check the number i+1 not present in it's correct i'th position and return it
+            for (int i = 0; i < n; i++) {
+                if (nums[i] != i+1)
+                    return i+1;
+            }
+			//If all at correct position, return n+1
+            return n+1;
+    }
+	
+Given an array of size n, find the majority element. The majority element is the element that appears more than  n/2 times
+
+Sort the array, the middle element is guaranteed to be in the majority. ( O(nlogn) time)
+ int majorityElement(int[] num) {
+	if (num.length == 1) {
+		return num[0];
+	}
+ 
+	Arrays.sort(num);
+	return num[num.length / 2];
+}
+
+Keep a track of the majority element,increase count if it is encountered again, else decrease count. When count reaches 0, set the 
+majority element to be the next one. If we cancel out each occurence of a an element with any other element, the majority element 
+remains till the end of array.( O(n) time)
+ int majorityElem(int[] arr){
+	int count = 0, result = 0;
+	for(int i=0;i<arr.length;i++){
+		//If count reaches 0, set majority element to be the next one
+		if(count == 0){
+			result = arr[i];
+			count = 1;
+		}
+		//Increase/decrease count of majority element if it is seen or not
+		else if(arr[i] == result){
+			count++;
+		}
+		else{
+			count--;
+		}
+	}
+	return result;
+}
+
+ 
+Reverse an array
+   { 1,2,3 } -> { 3,2,1 }
+   
+  //Initialize start and end indexes, and till start is smaller then end, swap the values at the indexes.
+  public static void  reverseArray(int[] data,int start,int end){
+		//If array is null, or has only one element, or starting index is bigger than end index
+        if(data == null || data.length == 1 || start > end)
+            return;
+		//Swap the two values
+        while(start<end){
+            int tmp = data[start];
+            data[start] = data[end];
+            data[end]=tmp;
+            start++;
+            end--;
+        }
+		
+Rotate array to the right by k steps 
+   {1,2,3,4,5,6} 2 -> {3,4,5,6,1,2}
+   
+ 
+  public static void rotateArray(int[] nums,int index) 
+    {
+		if(nums == null || nums.length==0 || k < 0)
+            return;
+        if(k > nums.length){
+            k = k %nums.length;
+        }
+        int index = nums.length - k;
+        reverseArray(nums,0,index-1);
+        reverseArray(nums,index,nums.length-1);
+        reverseArray(nums,0,nums.length-1);
+    }
+    }
+
+Rotate array to the left by k steps
+	public static void rotateArray(int[] nums,int index) 
+    {
+	   if(nums == null || nums.length==0 || index < 0)
+            return;	
+	   if(index>nums.length){
+           index = index%nums.length;
+       }
+       reverse(nums,0,index-1);
+       reverse(nums,index,nums.length-1);
+       reverse(nums,0,nums.length-1);
+      
+	}
+	
+Find a increasing subsequence of length 3 in the array
+	{1,2,3,4,5} -> true
+
+//Take the third element of the triplet to be element of the array, and maintaing first and second element while iterating through the
+list
+ boolean increasingTriplet(int[] nums) {
+        int x = Integer.MAX_VALUE;
+        int y = Integer.MAX_VALUE;
+        
+        for(int i=0;i<nums.length;i++){
+            int z = nums[i];
+			//x holds the smallest of the three values
+            if(x >= z){
+                x = z;
+            }
+			//y holds the middle value
+            else if(y>=z){
+                y = z;
+            }
+            else{
+                return true;
+            }
+        }
+        return false;
+    }
+
+kth largest element in array
+
+	//Use min heap to store top k elements, and delete the min when size is greater than k O(n logk)
+	int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> q = new PriorityQueue<Integer>(k);
+		//Use min heap to store top k elements
+        for(int i: nums){
+            q.offer(i);
+			//Delete the min when size is greater than k
+            if(q.size()>k){
+                q.poll();
+            }
+        }
+            return q.peek();   
+    }
+	
+ Given an unsorted array of integers, find the length of the longest consecutive elements sequence. 
+100,4,200,1,3,2 -> 4 (1,2,3,4)
+
+	//Save the elements in a set. Take the left and the right consecutive element to an element we encounter.
+	Keep removing left consecutive elements from the set till you keep finding them. Keep removing right consecutive
+	elements from the set till you keep finding them. Update the maximum sequence length you found so far
+	int longestConsecutive(int[] nums) {
+        if(nums.length == 0)
+            return  0;
+		//Save the elements in a set
+        Set<Integer> set = new HashSet<Integer>();
+        for(int i:nums){
+             set.add(i);
+        }
+        int maxcnt = 1;
+        for(int i:nums){
+			//Take the left and the right consecutive element to an element we encounter
+            int left = i-1;
+            int right = i+1;
+            int count = 1;
+			//Keep removing left consecutive elements from the set till you keep finding them
+            while(set.contains(left)){
+                count++;
+                set.remove(left);
+                left--;
+            }
+			//Keep removing right consecutive elements from the set till you keep finding them
+             while(set.contains(right)){
+                count++;
+                set.remove(right);
+                right++;
+            }
+			//Update the maximum sequence length you found so far
+            maxcnt = Math.max(count,maxcnt);
+        }
+        return maxcnt;
+           
+    }
+	
+Find if array contains duplicates
+1,2,3,4,3 -> true
+
+	//Take a set. If element is not present in set, add it. Else we found duplicate, return true
+	boolean containsDuplicate(int[] nums) {
+        if (nums.length<=1)
+            return false;
+        //Take a set
+		Set<Integer> set = new HashSet<Integer>();
+        for(int i=0;i<nums.length;i++){
+			//If element is not in the set, add it
+            if(!set.contains(nums[i])){
+                set.add(nums[i]);
+			}
+			//We found duplicate, return true
+            else{
+				return true;
+			}
+        }
+        return false;
+    }	
+
+Given an array of integers and an integer k, find out whether there are two distinct indices
+i and j in the array such that nums[i] = nums[j] and the difference between i and j is at most k. 
+	
+//Create hashmap to store map from elements to their index. If element is in hashmap, store the minimum difference between the
+two duplicate elements till now. If minimum distance is less then k, return true
+boolean containsNearbyDuplicate(int[] nums, int k) {
+        if(nums.length<2)
+            return false;
+		//Create hashmap to store map from elements to their index
+        Map<Integer,Integer> map = new HashMap<Integer,Integer>();
+        int mindist = Integer.MAX_VALUE;
+        for(int i=0;i<nums.length;i++){
+			//If element is in hashmap
+            if(map.containsKey(nums[i])){
+				//Store the minimum difference between the two duplicate elements till now
+                int index1 = map.get(nums[i]);
+                int index2 = i;
+                mindist = Math.min(mindist,index2-index1);
+            }
+              map.put(nums[i],i);
+        }
+	   //If minimum distance is less then k, return true
+       if(mindist<=k)
+            return true;
+       return false;
+    }
+	
+
+ Given a list of n-1 integers, with an integer missing, find the missing number.
+
+subtract sum of n-1 numbers from sum of array elements (O(n))
+ int missingNum(int[] arr,int n){
+	int sum = 0;
+	int num = 0;
+	for(int i=0;i<arr.length;i++){
+		sum  += arr[i];
+	}
+	num = ((n*(n+1))/2) - sum;
+	return num;
+}
+
+take xor of n numbers, xor of array elements, and find xor of both (O(n))
+	int missingNumber(int[] nums) {
+        int result = 0;
+		//Take xor of all numbers in array
+        for(int i=0;i<nums.length;i++){
+            result ^= nums[i];
+        }
+		//Take xor of all numbers from 0 to n
+        for(int i=0;i<=nums.length;i++){
+            result ^= i;
+        }
+		//Only missing number will remain, return it
+        return result;
+    }
+
+Find the Number Occurring Odd Number of Times
+
+Create a hashmap that contains the count of each element, output the element with an odd count (O(n) time and space)
+int oddCountElem(int[] arr){
+Map<Integer,Integer> map = new HashMap<Integer,Integer>();
+for(int i=0;i<arr.length;i++){
+	if(map.get(arr[i]) == null){
+		map.put(arr[i],1);
+	}
+	else{
+		map.put(arr[i],map.get(arr[i])+1);
+	}
+}
+for(Map.Entry<Integer,Integer> entry: map.entrySet()){
+	if(entry.getValue()%2!=0)
+		return entry.getValue();
+}
+return 0;
+}
+
+Take a bitwise xor of all elements one by one. The last remainining element in odd since A xor A = 0 and A xor 0 = A (O(n) time)
+int oddCountElem(int[] arr){
+	int result = 0;
+	for(int i=0;i<arr.length;i++){
+		result = result ^ arr[i];
+	}
+	return result;
+}
+
+ Largest Sum Contiguous Subarray
+
+ ignore the sum of the previous n-1 elements if nth element is greater than the sum.(O(n))	
+ int maxSubArray(int[] arr){
+	int sum = arr[0];
+	int maxsum = arr[0];
+	for(int i=1;i<arr.length;i++){
+		 sum+=a.get(i);
+	        if(sum < a.get(i)){
+	            sum = a.get(i);
+	        }
+		maxsum = Math.max(sum,maxsum);
+	}
+	return maxsum;
+}
+
+
+ Binary search in an array
+
+	int binarySearch(int[] data,int key) 
+    {
+         if(data.length == 0)
+            return -1;
+         int low = 0;
+         int high = data.length - 1;
+         
+         while(high >= low) {
+             int middle = (low + high) / 2;
+             if(data[middle] == key) {
+                 return middle;
+             }
+             if(data[middle] < key) {
+                low = middle + 1;
+             }
+             if(data[middle] > key) {
+                 high = middle - 1;
+             }
+        }
+        return -1;
+   }
+  
+	
+ Maximum sum so that no two numbers are adjacent
+
+	Loop for all elements in arr[] and maintain two sums incl and excl where incl = Max sum including the previous element and excl = 
+	Max sum excluding the previous element. Max sum excluding the current element will be max(incl, excl) and max sum including the 
+	current element will be excl + current element (Note that only excl is considered because elements cannot be adjacent).At the end of the
+	loop return max of incl and excl.
+	
+	int maxSumNoAdjacent(int[] nums) {
+        
+        if(nums==null||nums.length==0)
+            return 0;
+        
+        if(nums.length==1)
+            return nums[0];
+        
+		//Initialize a DP matrix saving the maximum sum for each index, and assign the base cases
+        int[] dp = new int[nums.length];
+        dp[0]=nums[0];
+        dp[1]=Math.max(nums[0], nums[1]);
+        
+		//For the maximum sum at i'th position, you choose the max between the sum at i-1'th position, or the sum of sum at i-2'th position and value at i'th position
+        for(int i=2; i<nums.length; i++){
+            dp[i] = Math.max(dp[i-2]+nums[i], dp[i-1]);
+        }
+        return dp[nums.length-1];
+    }
+	
+ Print leaders in an array (element is leader if it is greater than all elements on it's right)
+	e.g. 16,17,4,3,5,2 has leaders 17,5,2
+	
+	Scan from right to left, first leader is the rightmost element, after that keep track of the maximum, and whenever it changes,
+	we have a new leader (O(n))
+	
+	void printLeaders(int[] data) 
+    {
+        if(data == null || data.length == 0)
+            return;
+        
+        System.out.print(data[data.length-1]+" ");
+        int max = data[data.length-1];
+        for(int i=data.length-2;i>=0;i--){
+            if(max<data[i]){
+                System.out.print(data[i]+" ");
+                max = data[i];
+            }
+        }
+       
+    }
+
+ Find the pair with the given difference in array.
+
+	//Sort the array in ascending order. Take two indexes i=0 and j=1, if arr[j]-arr[i] is less then num, increment j, else increment i.
+	If equal, return true (O(n log n))
+	
+	int diffPossible(final List<Integer> a, int b) {
+	    if(a.size()<=1)
+	        return 0;
+	    Collections.sort(a);
+	    int i = 0;
+	    int j = 1;
+	    int diff = 0;
+	    while(i<a.size() && j<a.size()){
+	        if(diff == b && i!=j)
+	        diff = a.get(j) - a.get(i);
+	            return 1;
+	        else if(diff < b)
+	            j++;
+	        else i++;
+	        
+	    }
+	    return 0;
+	}
+	
+ Two elements whose sum is closest to zero
+
+	//Sort the array. Maintain two indexes start = 0 end = arr.length - 1 and find arr[start]+arr[end]. 
+	If sum > 0, increment start, else decrement end. Update min sum absolute value and record minstart and minend.  O(nlogn)
+	 1, 2, 4, -5, -3 is -1 
+	 
+	 void closeToZeroPair(int[] arr){
+        if(arr.length <=1)
+            return;
+        Arrays.sort(arr);
+        int start = 0;
+        int end = arr.length-1;
+        int minstart = 0;
+        int minend = arr.length-1;
+        int sum = Integer.MAX_VALUE;
+        int minsum = Integer.MAX_VALUE;
+        while(start<end){
+            sum = arr[start] + arr[end];
+            if(Math.abs(sum)<Math.abs(minsum)){
+                minsum = sum;
+                minstart = start;
+                minend = end;
+            }
+            if(sum<0)
+                start++;
+            else if(sum>0)
+                end--;
+                
+        }
+        System.out.println(arr[minstart]+","+arr[minend]);
+    }
+
+ First and second smallest elements in array
+	1,2,4,6,3 is 1,2
+	//When an element is smaller then the first, update second to be the first, and first to the array value. When it is smaller then
+	  the second and is not equal to first, update second to be the element O(n)
+	  
+	void firstAndSecondSmallest(int[] arr){
+        if(arr.length <=1)
+            return;
+        int firstSmall = Integer.MAX_VALUE;
+        int secondSmall = Integer.MAX_VALUE;
+        for(int i=0;i<arr.length;i++){
+            if(firstSmall>arr[i]){
+                
+                secondSmall = firstSmall;
+                firstSmall = arr[i];
+            }
+            else if(secondSmall>arr[i] && firstSmall!=arr[i]){
+                secondSmall = arr[i];
+            }
+        }
+        System.out.println(firstSmall+","+secondSmall);
+    }
+	
+ Separate 0's and 1's in an array
+	0,1,0,1,0,1 to 0,0,0,1,1,1
+	
+	Take two indexes start and end. while start < end. Keep incrementing start while we have 0's, and keep decrementing end while we 
+	have 1's, if we see anything else while start < end, exchange arr[start] and arr[end] O(n)
+	void separate0and1(int[] arr){
+        if(arr.length <=1)
+            return;
+        int start = 0;
+        int end = arr.length-1;
+        while(start<end){
+            while(arr[start] == 0 && start<end)
+                start++;
+            while(arr[end]==1 && start < end)
+                end--;
+            
+			int tmp = arr[start];
+			arr[start] = arr[end];
+			arr[end] = tmp;
+			start++;
+			end--;
+		
+        }
+    }
+
+ Maximum difference between two elements of array, larger element being right of smaller
+	2,3,10,6,4,8,1 is 8 (10,2)
+	//Keep track of maximum difference, and minimum element found till now. O(n)
+	
+	 void maxDiff(int[] arr){
+        if(arr.length <=1)
+            return;
+        int maxDiff = arr[1] - arr[0];
+        int minElem = arr[0];
+        for(int i=1;i<arr.length;i++){
+            if(arr[i]-minElem>maxDiff)
+                maxDiff = arr[i]-minElem;
+            if(arr[i]<minElem)
+                minElem = arr[i];
+        }
+        System.out.println(maxDiff);
+    }	
+	
+Product of Array Except Self: Given an array of n integers where n > 1, nums, return an array output such that output[i] is equal to the product of all the elements of nums except nums[i].	
+
+1, 2, 4, 5, 6 -> 240 120 60 48 40 
+
+	First fill up the prod array such that it contains product of all elements on left of arr[i] expect arr[i]
+	 Then fill up such that it contains product of all elements on right of arr[i] expect arr[i] O(n) time and space
+	 
+	int[] productExceptSelf(int[] nums) {
+        
+        int n = nums.length;
+        int[] res = new int[n];
+        res[0] = 1;
+        
+		//First fill up the result array such that it contains product of all elements on left of arr[i] expect arr[i]
+        for (int i = 0; i < n-1; i++) {
+            res[i+1] = res[i] * nums[i];
+        }
+		//Then fill up such that it contains product of all elements on right of arr[i] expect arr[i]
+        int right = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            res[i] *= right;
+            right *= nums[i];
+
+        }
+        
+        return res;
+    }
+     
+	
+ Separate Even and odds in an array
+	1,4,5,6,8,9 to 1,4,6,8,5,9
+	
+	Take two indexes start and end. while start < end. Keep incrementing start while we see even numbers, and keep decrementing end while we 
+	have odd numbers, if we see anything else, exchange arr[start] and arr[end] O(n)
+	
+	void separateEvenOdd(int[] arr){
+       int start = 0;
+       int end = arr.length - 1;
+       while(start<end){
+           while(arr[start]%2==0 && start<end)
+                start++;
+           while(arr[end]%2==1 && start<end)
+                end--; 
+           
+		   int tmp = arr[start];
+		   arr[start] = arr[end];
+		   arr[end] = tmp;
+		   start++;
+		   end--;
+           
+       }
+       for(int i:arr)
+            System.out.print(i+" ");
+    }
+	
+ Sort an array of 0's, 1's and 2's
+	0,0,1,2,0,1,0,2 to 0,0,0,0,1,1,2
+	
+	Start with three indexes, start = 0, mid = 0 and end = n-1, if arr[mid] = 0, swap arr[start] and arr[mid] and increment start and mid.
+	If arr[mid] = 2, swap arr[end] and arr[mid] and decrement end, else only increment mid. O(n)
+
+	void sort0s1s2s(int[] arr){
+       int start = 0;
+       int mid = 0;
+       int end = arr.length-1;
+       while(mid<=end){
+            int tmp = 0;
+            if(arr[mid]==0){
+                tmp = arr[mid];
+                arr[mid] = arr[start];
+                arr[start] = tmp;
+                start++;
+                mid++;
+            }
+            else if(arr[mid]==2){
+                tmp = arr[mid];
+                arr[mid] = arr[end];
+                arr[end] = tmp;
+                end--;
+            }
+            else{
+                mid++;
+            }
+       }
+       for(int i:arr)
+            System.out.print(i+" ");
+    }
+
+ Equilibrium index of array. Sum of left elements equals sum of right elements
+
+	Take sum of elements in array. Then in a loop, decrement sum to make it rightsum, if it equals leftsum, we print equilibrium index
+	Then increment leftsum O(n))
+	
+	void equiIndex(int[] arr){
+            int sum = 0;
+            int leftsum = 0;
+           for(int i=0;i<arr.length;i++){
+              sum+=arr[i];
+            }
+            for(int i=0;i<arr.length;i++){
+                sum = sum-arr[i];
+                if(leftsum == sum)
+                    System.out.print(i+" ");
+                leftsum+=arr[i];
+            }
+        }    
+
+You have n versions [1, 2, ..., n] and you want to find out the first bad one, which causes all the following ones to be bad.
+You are given an API bool isBadVersion(version) which will return whether version is bad.
+
+//Perform binary search, if middle version is good, the bad version will be on the left, so set left = mid+1, but if middle version is
+bad, that might not have been the first bad version, so set right = mid;
+public int firstBadVersion(int n) {
+int left = 1;
+int right = n;
+while (left < right) {
+	int mid = left + (right - left) / 2;
+	if (isBadVersion(mid)) {
+		right = mid;
+	} else {
+		left = mid + 1;
+	}
+}
+return left;
+        
+}
+
+* Given a binary array, find the maximum number of consecutive 1s in this array
+
+[1,1,0,1,1,1] -> 3
+	
+//Iterate through the array.If you see a 1, keep incrementing count the number of 1's, and update maxCount which keeps track of the maximum consecutive 1s seen so far. Reset count to 0 whenever you see a 0.
+	public int findMaxConsecutiveOnes(int[] nums) {
+        int count = 0;
+        int maxcount = 0;
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]==1){
+                count++;
+                if(maxcount<count){
+                    maxcount = count;
+                }
+            }
+            else{
+                count = 0;
+            }
+        }
+        return maxcount;
+    }
+	
+* Single Number: Given an array of integers, every element appears twice except for one. Find that single one.
+
+[1,1,2,2,3,3,4] -> 4
+
+	public int singleNumber(int[] nums) {
+	   //Initialize the result as the first number of the array
+       int result = nums[0];
+	   //Iterate through the array and take XOR of all numbers in it with result.
+       for(int i=1;i<nums.length;i++){
+           result = result ^ nums[i];
+       }
+	   // All the number appearing twice will become 0, since a xor a = 0, and we will be left with the once appearing number
+	   //since 0 xor a = a
+       return result;
+    }
+
+* Single Number 2: Given an array of integers, every element appears three times except for one, which appears exactly once. Find that single one.
+
+[1,1,1,2,2,2,3] -> 3
+
+	int singleNumber(int[] nums) {
+        int ones = 0, twos = 0;
+        for(int i = 0; i < nums.length; i++){
+            ones = (ones ^ nums[i]) & ~twos;
+            twos = (twos ^ nums[i]) & ~ones;
+        }
+        return ones;
+    }
+
+* Single Number 3: Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
+
+[1, 2, 1, 3, 2, 5] -> [3, 5]
+
+	int[] singleNumber(int[] nums) {
+
+        int diff = 0;
+		// XOR all elements in the array, and get the XOR of the two numbers we need to find
+        for (int num : nums) {
+            diff ^= num;
+        }
+
+		//Find the righmost bit which is set
+        diff &= -diff;
+        
+		//Divide all numbers into two groups, one with the  bit set, another with the bit unset
+        int[] rets = {0, 0}; 
+        for (int num : nums)
+        {
+			//We XOR numbers in each group and find a number in either group.
+            if ((num & diff) == 0) 
+            {
+                rets[0] ^= num;
+            }
+            else 
+            {
+                rets[1] ^= num;
+            }
+        }
+        return rets;
+    }
+
+*Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+Find all the elements of [1, n] inclusive that do not appear in this array.
+
+[4,3,2,7,8,2,3,1] -> [5,6]
+
+	List<Integer> findDisappearedNumbers(int[] nums) {
+		List<Integer> ret = new ArrayList<Integer>();
+		//Iterate through the input array, marking the indexes of the elements we see as negative by using 
+		//nums[nums[i] -1] = -nums[nums[i]-1]
+		for(int i = 0; i < nums.length; i++) {
+			int val = Math.abs(nums[i]) - 1;
+			if(nums[val] > 0) {
+				nums[val] = -nums[val];
+			}
+		}
+		//Iterate again and add the numbers not marked as negative in the result, since it means we never saw that index before 
+		for(int i = 0; i < nums.length; i++) {
+			if(nums[i] > 0) {
+				ret.add(i+1);
+			}
+		}
+		return ret;
+	}
+	
+* Given a non-empty integer array of size n, find the minimum number of moves required to make all array elements equal, where a move is incrementing n - 1 elements by 1.
+[1,2,3] -> 3 since
+[1,2,3]  =>  [2,3,3]  =>  [3,4,3]  =>  [4,4,4]
+
+	int minMoves(int[] nums) {
+        int sum = 0;
+        int minNum = Integer.MAX_VALUE;
+		//Iterate through the array and calculate the sum, and the minimum value in array
+        for(int i=0;i<nums.length;i++){
+            sum+=nums[i];
+            if(minNum>nums[i])
+                minNum = nums[i];
+        }
+		//The minimum no of moves will be sum - minimum value * array length
+        return sum - minNum*nums.length;
+    }
+
+* Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+
+[-2,1,-3,4,-1,2,1,-5,4] -> [4,-1,2,1] , 6
+
+	
+	int maxSubArray(int[] A) {
+		//Initialize a array of size A.length to keep track of maximum sum seen till now
+        int max = A[0];
+        int[] sum = new int[A.length];
+        sum[0] = A[0];
+        
+		//Sum till i'th element will be the maximum of sum[i-1] + A[i] and A[i] if sum[i-1] is negative. Update the maximum after 
+		getting sum[i]
+        for (int i = 1; i < A.length; i++) {
+            sum[i] = Math.max(A[i], sum[i - 1] + A[i]);
+            max = Math.max(max, sum[i]);
+        }
+        return max;
+    }
+	
+* Given a non-empty array of integers, return the third maximum number in this array. If it does not exist, return the maximum number.
+
+	int thirdMax(int[] nums) {
+        Integer max1 = null;
+        Integer max2 = null;
+        Integer max3 = null;
+		//Iterate through the array and keep reassigning the max values
+        for (Integer n : nums) {
+            if (n.equals(max1) || n.equals(max2) || n.equals(max3)) continue;
+            if (max1 == null || n > max1) {
+                max3 = max2;
+                max2 = max1;
+                max1 = n;
+            } else if (max2 == null || n > max2) {
+                max3 = max2;
+                max2 = n;
+            } else if (max3 == null || n > max3) {
+                max3 = n;
+            }
+        }
+        return max3 == null ? max1 : max3;
+    }
+
+* Given an array of integers and an integer k, you need to find the number of unique k-diff pairs in the array. Here a k-diff pair is defined as an integer pair (i, j), where i and j are both numbers in the array and their absolute difference is k.
+
+[3, 1, 4, 1, 5], k = 2 -> 2
+
+	int findPairs(int[] nums, int k) {
+        if (nums == null || nums.length == 0 || k < 0)   return 0;
+    
+		//Keep a map to keep count of occurences of the numbers
+        Map<Integer, Integer> map = new HashMap<>();
+        int count = 0;
+        for (int i : nums) {
+            map.put(i, map.getOrDefault(i, 0) + 1);
+        }
+
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (k == 0) {
+				//If difference is 0, count how many numbers appear more than twice
+                if (entry.getValue() >= 2) {
+                    count++;
+                } 
+            } else {
+				//if both the number and number + k exists in the hashmap, increment count
+                if (map.containsKey(entry.getKey() + k)) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+	
+* Find All Duplicates in an Array: Given an array of integers, 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+Find all the elements that appear twice in this array.
+
+	List<Integer> findDuplicates(int[] nums) {
+        List<Integer> list = new ArrayList<Integer>();
+        for(int i=0;i<nums.length;i++){ 
+			//When you find a number nums[i], flip the number at position nums[i]-1 to negative,if it is already negative, nums[i] occurs twice
+            int val = Math.abs(nums[i])-1;
+            if(nums[val]>0){
+                nums[val] = -nums[val];
+            }
+            else{
+                list.add(Math.abs(nums[i]));
+            }
+        }
+        return list;
+    }
+	
+* Diagonal Traverse: Given a matrix of M x N elements (M rows, N columns), return all elements of the matrix in diagonal order 
+
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],  -> [1,2,4,7,5,3,6,8,9]
+ [ 7, 8, 9 ]   
+ 
+ int[] findDiagonalOrder(int[][] matrix) {
+        if (matrix == null || matrix.length == 0) return new int[0];
+        int m = matrix.length, n = matrix[0].length;
+        
+        int[] result = new int[m * n];
+        int row = 0, col = 0, d = 0;
+        int[][] dirs = {{-1, 1}, {1, -1}};
+        
+		//Traverse through the matrix diagonal by diagonal, and change walk direction if out of any matrix borders, otherwise continue walking
+        for (int i = 0; i < m * n; i++) {
+            result[i] = matrix[row][col];
+            row += dirs[d][0];
+            col += dirs[d][1];
+            
+            if (row >= m) { row = m - 1; col += 2; d = 1 - d;}
+            if (col >= n) { col = n - 1; row += 2; d = 1 - d;}
+            if (row < 0)  { row = 0; d = 1 - d;}
+            if (col < 0)  { col = 0; d = 1 - d;}
+        }
+        
+        return result;
+    }
+	
+* Shuffle Array: Shuffle a set of numbers without duplicates.
+
+[1,2,3] shuffle [2,1,3] reset [1,2,3] shuffle [3,1,2]
+
+	class Solution {
+
+		private int[] nums;
+		private Random random;  
+		public Solution(int[] nums) {
+			this.nums = nums;
+			random = new Random();
+		}
+		
+		/** Resets the array to its original configuration and return it. */
+		public int[] reset() {
+			 return nums;
+		}
+		
+		/** Returns a random shuffling of the array. */
+		public int[] shuffle() {
+			if(nums == null) return null;
+			int[] a = nums.clone();
+			//Iterate through the array and swap the value at an index with a random index before it
+			for(int j = 1; j < a.length; j++) {
+				int i = random.nextInt(j + 1);
+				int t = a[i];
+				a[i] = a[j];
+				a[j] = t;
+			}
+			return a;
+		}
+}
+
+* Non-overlapping Intervals: Given a collection of intervals, find the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping
+
+	int eraseOverlapIntervals(Interval[] intervals) {
+        if (intervals.length == 0)  return 0;
+
+		//Sort the intervals based on their end points
+        Arrays.sort(intervals, new myComparator());
+        int end = intervals[0].end;
+        int count = 1;        
+	
+		//Traverse to get the maximum number of non-overlapping intervals
+        for (int i = 1; i < intervals.length; i++) {
+            if (intervals[i].start >= end) {
+                end = intervals[i].end;
+                count++;
+            }
+        }
+		//Subtract max number of non-overlapping intervals from the total no of intervals to get result
+        return intervals.length - count;
+
+    }
+    
+    class myComparator implements Comparator<Interval> {
+        public int compare(Interval a, Interval b) {
+            return a.end - b.end;
+        }
+    }
+	
+* Merge Intervals: Given a collection of intervals, merge all overlapping intervals.
+
+	List<Interval> merge(List<Interval> intervals) {
+        
+        List<Interval> result = new ArrayList<Interval>();
+        if(intervals==null||intervals.size()==0)
+            return result;
+ 
+		//Sort intervals according to the start points, if they are equal sort using end points
+        Collections.sort(intervals, new myComparator());
+        Interval pre = intervals.get(0);
+       
+	    //we take the first interval and compare its end with the next intervals starts. As long as they overlap, we update the end to be the max end of the overlapping intervals. Once we find a non overlapping interval, we can add the previous "extended" interval and start over.
+        for(int i=0; i<intervals.size(); i++){
+            Interval curr = intervals.get(i);
+            if(curr.start>pre.end){
+                result.add(pre);
+                pre = curr;
+            }
+            else{
+                Interval merged = new Interval(pre.start, Math.max(pre.end,curr.end));
+                pre = merged;
+            }
+        }
+        result.add(pre);
+        return result;
+    }
+    
+    class myComparator implements Comparator<Interval> {
+
+        public int compare(Interval i1, Interval i2){
+            if(i1.start!=i2.start)
+                return i1.start-i2.start;
+            else
+                return i1.end-i2.end;
+        }
+    }
