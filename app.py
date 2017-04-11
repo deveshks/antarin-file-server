@@ -12,8 +12,8 @@ application.config.from_object('config')
 application.config.update({
     "STORAGE_PROVIDER": "S3_US_WEST_OREGON",
     "STORAGE_CONTAINER": "antarin-bucket",
-    "STORAGE_KEY": "AKIAJ2R5RQQRKBW3QPSA",
-    "STORAGE_SECRET": "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",
+    "STORAGE_KEY": "",
+    "STORAGE_SECRET": "",
     "STORAGE_SERVER": True
 })
 db = SQLAlchemy(application)
