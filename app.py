@@ -10,8 +10,8 @@ libcloud.security.VERIFY_SSL_CERT = False
 application = Flask(__name__)
 application.config.from_object('config')
 application.config.update({
-    "STORAGE_PROVIDER": "S3_US_WEST_OREGON",
-    "STORAGE_CONTAINER": "antarin-bucket",
+    "STORAGE_PROVIDER": "",
+    "STORAGE_CONTAINER": "",
     "STORAGE_KEY": "",
     "STORAGE_SECRET": "",
     "STORAGE_SERVER": True
